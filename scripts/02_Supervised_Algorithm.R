@@ -12,15 +12,17 @@ lookup$clust <- as.character(lookup$clust)
 
 #join the named clusters
 c <- class %>% inner_join(lookup,by=c("cluster"="clust"))
+head(c)
 c <- c %>% dplyr::select(-cluster)
-c <- c %>% dplyr::select(-clust1)
+c <- c %>% dplyr::rename(cluster=clust1)
 
+names(c)
 #keep necessary variables for model
 class_select <- c %>% dplyr::select(elo_favor_team:cluster)
 
 #hold 2021 data as test set
 test <- c %>% filter(season==2021)
-
+View(test)
 test$cluster <- as.factor(test$cluster)
 class_select %>% group_by(cluster) %>% count()
 
@@ -93,5 +95,6 @@ confusionMatrix(testing_results$cluster,testing_results$Neural_Net)
 #new %>% group_by(cluster) %>% count()
 
 #write data to file
+View(testing_results)
 testing_results %>% dplyr::select(date:elo_avg,C50) %>% write_csv('data/game_class.csv')
 

@@ -7,11 +7,17 @@ elo.df <- read.csv(u)
 
 #Do some data cleaning. Re-organize the dataset into favored team and underdog
 elo.df$date <- as.Date(elo.df$date)
-
+names(elo.df)
 elo <- elo.df %>% mutate(elo_prob1 = if_else(elo_prob1<.5,1-elo_prob1,elo_prob1))
+View(elo)
 elo <- elo %>% mutate(elo_favor_team=if_else(elo1_pre>elo2_pre,elo1_pre,elo2_pre)) %>% 
   mutate(elo_under_team=if_else(elo1_pre<elo2_pre,elo1_pre,elo2_pre),
-         elo_avg=(elo1_pre+elo2_pre)/2) 
+         elo_avg=(elo1_pre+elo2_pre)/2)  %>% 
+  mutate(favor_team=if_else(elo1_pre>elo2_pre,team1,team2)) %>% 
+  mutate(under_team=if_else(elo1_pre<elo2_pre,team1,team2)) %>% 
+  dplyr::select(-c(team1,team2)) %>% 
+  dplyr::rename(team1=favor_team) %>% 
+  dplyr::rename(team2=under_team)
 
 #Just review data since 2017 
 elo_df <- elo %>% filter(season>=2017) %>% 
